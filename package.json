@@ -6,7 +6,8 @@
   "scripts": {
     "build": "rimraf build && tsc --project ./tsconfig.json",
     "dev": "rimraf build && tsc --project './tsconfig.json' --watch & NODE_ENV=development nodemon build",
-    "start": "NODE_ENV=production node build/index.js"
+    "start": "NODE_ENV=production node build/index.js",
+    "logs":"heroku logs --tail -a envite-be"
   },
   "keywords": [],
   "author": "",
