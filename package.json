@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rimraf build && tsc --project ./tsconfig.json",
     "dev": "rimraf build && tsc --project './tsconfig.json' --watch & NODE_ENV=development nodemon build",
-    "start": "tsc --project './tsconfig.json' && NODE_ENV=production node build"
+    "start": "NODE_ENV=production node build/index.js"
   },
   "keywords": [],
   "author": "",
