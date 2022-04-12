@@ -33,6 +33,7 @@ export const registerUser = async (user:IRegisterUserRequestBody)
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
       uid: userRecord.uid,
+      profileUrl: 'https://res.cloudinary.com/dfnnhgvrs/image/upload/v1649772764/envite/placeholder/avatarA.png',
     });
 
     return {
