@@ -16,7 +16,6 @@ admin.initializeApp({
     privateKey: `${process.env.FB_PRIVATE_KEY}`.replace(/\\n/g, '\n'),
     clientEmail: process.env.FB_CLIENT_EMAIL,
   }),
-  databaseURL: process.env.FB_DATABASE_URL,
 });
 
 const app = express();

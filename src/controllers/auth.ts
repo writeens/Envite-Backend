@@ -60,6 +60,38 @@ export const Register = async (req:Request, res:Response, next:NextFunction) => 
 };
 
 /** LOGIN A USER */
-export const Login = () => {
+export const Login = async (req:Request, res:Response, next:NextFunction) => {
+  try {
+    // VALIDATE
+    const { body } = req;
 
+    const schema = Joi.object({
+      email: Joi.string().email().required(),
+      password: Joi.string().required(),
+    });
+
+    const validationResult = schema.validate(body);
+
+    if (validationResult.error) {
+      const error = new ValidationError(
+        validationResult.error.details[0].message,
+        RESPONSE_TYPES.VALIDATION_ERROR,
+      );
+      next(error);
+    }
+
+    // ACT
+    const user = await AuthService.loginUser({
+      email: `${body.email}`.toLowerCase(),
+      password: body.password,
+    });
+
+    // RESPOND
+    return res.status(StatusCodes.OK).json({
+      status: 'success',
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
