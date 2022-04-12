@@ -7,11 +7,12 @@ import { RESPONSE_MESSAGES } from '../constants/responseMessages';
 import { RESPONSE_TYPES } from '../constants/responseTypes';
 import { ClientError } from '../exceptions/clientError';
 import { COLLECTIONS } from '../helpers/util';
-import { ILoginUserComplete, IRegisterUserComplete, IRegisterUserRequestBody } from '../interfaces/user';
-import { IUser } from '../models/user';
+import {
+  ILoginUserAPIResponse, ILoginUserComplete, IRegisterUserComplete, IRegisterUserRequestBody,
+} from '../interfaces/user';
 
 export const registerUser = async (user:IRegisterUserRequestBody)
-:Promise<IRegisterUserComplete | undefined> => {
+:Promise<IRegisterUserComplete> => {
   try {
     // CREATE USER ON AUTHENTICATION DASHBOARD
     const userRecord = await getAuth().createUser({
@@ -31,6 +32,7 @@ export const registerUser = async (user:IRegisterUserRequestBody)
       email: user.email,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
+      uid: userRecord.uid,
     });
 
     return {
@@ -48,7 +50,7 @@ export const loginUser = async ({ email, password }:{email:string, password:stri
   try {
     const response = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FB_API_KEY}`, { email, password });
 
-    const userRecord = response.data as ILoginUserComplete;
+    const userRecord = response.data as ILoginUserAPIResponse;
 
     const db = getFirestore();
 
@@ -59,7 +61,7 @@ export const loginUser = async ({ email, password }:{email:string, password:stri
       throw new ClientError(RESPONSE_MESSAGES.UNABLE_TO_LOGIN, RESPONSE_TYPES.UNABLE_TO_LOGIN);
     }
 
-    const user:IUser = doc.data() as IUser;
+    const user = doc.data() as ILoginUserComplete;
 
     return user;
   } catch (error:any) {

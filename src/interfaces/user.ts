@@ -14,11 +14,18 @@ export interface IRegisterUserComplete {
     uid:string
 }
 
-export interface ILoginUserComplete {
+export interface ILoginUserAPIResponse {
     idToken:string,
     email:string,
     refreshToken:string,
     expiresIn:string,
     localId:string,
     registered: boolean
+}
+
+export interface ILoginUserComplete {
+    firstName:string,
+    lastName:string,
+    email:string,
+    uid:string
 }
