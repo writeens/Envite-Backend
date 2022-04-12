@@ -1,3 +1,5 @@
+import { boolean } from 'joi';
+
 export interface IRegisterUserRequestBody {
     firstName:string,
     lastName:string,
@@ -6,6 +8,22 @@ export interface IRegisterUserRequestBody {
 }
 
 export interface IRegisterUserComplete {
+    firstName:string,
+    lastName:string,
+    email:string,
+    uid:string
+}
+
+export interface ILoginUserAPIResponse {
+    idToken:string,
+    email:string,
+    refreshToken:string,
+    expiresIn:string,
+    localId:string,
+    registered: boolean
+}
+
+export interface ILoginUserComplete {
     firstName:string,
     lastName:string,
     email:string,
