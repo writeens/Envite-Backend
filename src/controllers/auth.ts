@@ -6,7 +6,7 @@ import { capitalize } from 'lodash';
 import { RESPONSE_TYPES } from '../constants/responseTypes';
 import { ValidationError } from '../exceptions';
 import { IRegisterUserRequestBody } from '../interfaces/user';
-import * as AuthService from '../services';
+import * as AuthService from '../services/auth';
 
 /** REGISTER A USER */
 export const Register = async (req:Request, res:Response, next:NextFunction) => {

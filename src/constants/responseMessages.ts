@@ -4,6 +4,7 @@ export enum RESPONSE_MESSAGES {
     UNABLE_TO_CREATE_USER = 'We were unable to create your account at this time. Please try again later',
     UNABLE_TO_FIND_EMAIL = 'This account does not exist, Try creating one.',
     UNABLE_TO_LOGIN = 'We could not log you in at this time. Please try again later',
-    MISSING_EMAIL_OR_PASSWORD = 'Please check the email and password and try again.'
+    MISSING_EMAIL_OR_PASSWORD = 'Please check the email and password and try again.',
+    UNABLE_TO_FETCH_USER = 'Unable to fetch user.'
 
 }

@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import admin from 'firebase-admin';
-import { AuthRouter } from './routes';
+import { AuthRouter, ProfileRouter } from './routes';
 import { clientErrorMiddlware } from './middleware/error';
 
 dotenv.config();
@@ -32,6 +32,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // USE AUTH ROUTER
 app.use(AuthRouter);
+app.use(ProfileRouter);
 
 // CLIENT ERROR ROUTE HANDLER
 app.use(clientErrorMiddlware);
