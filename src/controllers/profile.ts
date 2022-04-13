@@ -62,3 +62,19 @@ export const UpdateUserProfile = async (req:Request, res:Response, next:NextFunc
     next(error);
   }
 };
+
+export const DeleteUserProfile = async (req:Request, res:Response, next:NextFunction) => {
+  try {
+    const { uid } = req;
+
+    const user = await UserService.deleteUser(uid);
+
+    // RESPOND
+    return res.status(StatusCodes.OK).json({
+      status: 'success',
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
