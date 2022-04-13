@@ -2,7 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import admin from 'firebase-admin';
-import { AuthRouter, ProfileRouter } from './routes';
+import AuthRouter from './routes/auth';
+import ProfileRouter from './routes/profile';
 import { clientErrorMiddlware } from './middleware/error';
 
 dotenv.config();

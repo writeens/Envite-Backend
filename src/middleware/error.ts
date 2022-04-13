@@ -3,7 +3,7 @@
 import { Response, Request, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { RESPONSE_TYPES } from '../constants/responseTypes';
-import { ClientError, ValidationError } from '../exceptions';
+import { ClientError, ValidationError, AuthorizationError } from '../exceptions';
 
 export const clientErrorMiddlware = (err:Error, req:Request, res:Response, next:NextFunction) => {
   if (err instanceof ValidationError) {
@@ -14,6 +14,14 @@ export const clientErrorMiddlware = (err:Error, req:Request, res:Response, next:
     });
   }
   if (err instanceof ClientError) {
+    return res.status(err.status).json({
+      status: 'fail',
+      message: err.message,
+      type: err.type,
+    });
+  }
+
+  if (err instanceof AuthorizationError) {
     return res.status(err.status).json({
       status: 'fail',
       message: err.message,

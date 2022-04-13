@@ -11,7 +11,7 @@ export interface IRegisterUserComplete {
     firstName:string,
     lastName:string,
     email:string,
-    uid:string
+    token:string,
 }
 
 export interface ILoginUserAPIResponse {
@@ -27,5 +27,5 @@ export interface ILoginUserComplete {
     firstName:string,
     lastName:string,
     email:string,
-    uid:string
+    token:string
 }
