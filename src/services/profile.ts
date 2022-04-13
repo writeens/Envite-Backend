@@ -25,7 +25,7 @@ export const fetchUser = async (uid:string) => {
 
     return user;
   } catch (error) {
-    throw new ClientError(RESPONSE_MESSAGES.UNABLE_TO_FETCH_USER, RESPONSE_TYPES.UNABLE_TO_LOGIN);
+    throw new ClientError(RESPONSE_MESSAGES.UNABLE_TO_FETCH_USER, RESPONSE_TYPES.UNABLE_TO_FETCH_USER);
   }
 };
 
@@ -63,5 +63,22 @@ export const updateUser = async (
       RESPONSE_MESSAGES.UNABLE_TO_UPDATE_PROFILE,
       RESPONSE_TYPES.UNABLE_TO_CREATE_USER,
     );
+  }
+};
+
+export const deleteUser = async (uid:string) => {
+  try {
+    // DELETE USER ON AUTHENTICATION DASHBOARD
+    await getAuth().deleteUser(uid);
+
+    const db = getFirestore();
+
+    await db.collection(COLLECTIONS.USERS).doc(uid).delete();
+
+    return {
+      uid,
+    };
+  } catch (error) {
+    throw new ClientError(RESPONSE_MESSAGES.UNABLE_TO_FETCH_USER, RESPONSE_TYPES.UNABLE_TO_LOGIN);
   }
 };
