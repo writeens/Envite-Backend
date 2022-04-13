@@ -10,6 +10,7 @@ import { COLLECTIONS } from '../helpers/util';
 import {
   ILoginUserAPIResponse, ILoginUserComplete, IRegisterUserComplete, IRegisterUserRequestBody,
 } from '../interfaces/user';
+import { IUser } from '../models/user';
 
 export const registerUser = async (user:IRegisterUserRequestBody)
 :Promise<IRegisterUserComplete> => {
@@ -36,11 +37,14 @@ export const registerUser = async (user:IRegisterUserRequestBody)
       profileUrl: 'https://res.cloudinary.com/dfnnhgvrs/image/upload/v1649772764/envite/placeholder/avatarA.png',
     });
 
+    // CREATE TOKEN TO SEND TO CLIENT
+    const customToken = await getAuth().createCustomToken(userRecord.uid);
+
     return {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      uid: userRecord.uid,
+      token: customToken,
     };
   } catch (error:any) {
     throw new ClientError(error.message, RESPONSE_TYPES.UNABLE_TO_CREATE_USER);
@@ -62,9 +66,19 @@ export const loginUser = async ({ email, password }:{email:string, password:stri
       throw new ClientError(RESPONSE_MESSAGES.UNABLE_TO_LOGIN, RESPONSE_TYPES.UNABLE_TO_LOGIN);
     }
 
-    const user = doc.data() as ILoginUserComplete;
+    const user = doc.data() as IUser;
 
-    return user;
+    // CREATE TOKEN TO SEND TO CLIENT
+    const customToken = await getAuth().createCustomToken(userRecord.localId);
+
+    const userData:ILoginUserComplete = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      token: customToken,
+      email: user.email,
+    };
+
+    return userData;
   } catch (error:any) {
     let message = '';
     if (error.response) {

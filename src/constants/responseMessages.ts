@@ -7,5 +7,6 @@ export enum RESPONSE_MESSAGES {
     MISSING_EMAIL_OR_PASSWORD = 'Please check the email and password and try again.',
     UNABLE_TO_FETCH_USER = 'Unable to fetch user.',
     UNABLE_TO_UPDATE_PROFILE = 'Looks like we cannot update your profile at this time. Please try again later.',
+    FORBIDDEN = 'You are not authorized to perform this request',
 
 }
