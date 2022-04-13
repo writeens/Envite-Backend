@@ -3,9 +3,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import Joi from 'joi';
+import { capitalize } from 'lodash';
 import { RESPONSE_TYPES } from '../constants/responseTypes';
 import { ValidationError } from '../exceptions';
 import * as UserService from '../services/profile';
+import { IUpdateProfileRequestBody } from '../interfaces/profile';
 
 export const FetchUserProfile = async (req:Request, res:Response, next:NextFunction) => {
   try {
@@ -39,12 +41,15 @@ export const FetchUserProfile = async (req:Request, res:Response, next:NextFunct
 
 export const UpdateUserProfile = async (req:Request, res:Response, next:NextFunction) => {
   try {
-    const { body } = req;
+    const { body, params } = req;
 
     const schema = Joi.object({
       firstName: Joi.string().required(),
       lastName: Joi.string().required(),
-      email: Joi.string().email().required(),
+      profileUrl: Joi.string().required(),
+    });
+
+    const paramSchema = Joi.object({
       uid: Joi.string().required(),
     });
 
@@ -58,7 +63,23 @@ export const UpdateUserProfile = async (req:Request, res:Response, next:NextFunc
       next(error);
     }
 
-    const user = await UserService.updateUser();
+    const paramValidationResult = paramSchema.validate(params);
+
+    if (paramValidationResult.error) {
+      const error = new ValidationError(
+        paramValidationResult.error.details[0].message,
+        RESPONSE_TYPES.VALIDATION_ERROR,
+      );
+      next(error);
+    }
+
+    const profileData:IUpdateProfileRequestBody = {
+      firstName: capitalize(body.firstName),
+      lastName: capitalize(body.lastName),
+      profileUrl: body.profileUrl,
+    };
+
+    const user = await UserService.updateUser(params.uid, profileData);
 
     // RESPOND
     return res.status(StatusCodes.OK).json({
