@@ -107,3 +107,28 @@ export const deleteEnvite = async (uid:string, eid:string) => {
     );
   }
 };
+
+export const fetchEnvite = async (eid:string) => {
+  try {
+    const db = getFirestore();
+
+    const enviteRef = db.collection(COLLECTIONS.ENVITES).doc(eid);
+    const doc = await enviteRef.get();
+
+    if (!doc.exists) {
+      throw new ClientError(
+        RESPONSE_MESSAGES.UNABLE_TO_FETCH_ENVITE,
+        RESPONSE_TYPES.UNABLE_TO_FETCH_ENVITE,
+      );
+    }
+
+    const envite = doc.data() as IEnvite;
+
+    return envite;
+  } catch (error) {
+    throw new ClientError(
+      RESPONSE_MESSAGES.UNABLE_TO_FETCH_ENVITE,
+      RESPONSE_TYPES.UNABLE_TO_FETCH_ENVITE,
+    );
+  }
+};
