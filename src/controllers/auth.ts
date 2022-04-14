@@ -9,7 +9,7 @@ import { IRegisterUserRequestBody } from '../interfaces/user';
 import * as AuthService from '../services/auth';
 
 /** REGISTER A USER */
-export const Register = async (req:Request, res:Response, next:NextFunction) => {
+export const register = async (req:Request, res:Response, next:NextFunction) => {
   try {
     // VALIDATE
     const { body } = req;
@@ -60,7 +60,7 @@ export const Register = async (req:Request, res:Response, next:NextFunction) => 
 };
 
 /** LOGIN A USER */
-export const Login = async (req:Request, res:Response, next:NextFunction) => {
+export const login = async (req:Request, res:Response, next:NextFunction) => {
   try {
     // VALIDATE
     const { body } = req;

@@ -5,7 +5,7 @@ import { isEmpty } from 'lodash';
 import { AuthorizationError } from '../exceptions';
 
 /** AUTHORIZATION MIDDLEWARE */
-export const VerifyToken = async (req:Request, res:Response, next:NextFunction) => {
+export const verifyToken = async (req:Request, res:Response, next:NextFunction) => {
   try {
     const { headers } = req;
     const bearerHeader = headers.authorization;

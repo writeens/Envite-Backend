@@ -12,4 +12,5 @@ const setDBEnv = (collectionName:string) => {
 
 export const COLLECTIONS = {
   USERS: setDBEnv('users'),
+  ENVITES: setDBEnv('envites'),
 };

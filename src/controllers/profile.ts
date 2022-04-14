@@ -11,7 +11,7 @@ import { ValidationError } from '../exceptions';
 import * as UserService from '../services/profile';
 import { IUpdateProfileRequestBody } from '../interfaces/profile';
 
-export const FetchUserProfile = async (req:Request, res:Response, next:NextFunction) => {
+export const fetchUserProfile = async (req:Request, res:Response, next:NextFunction) => {
   try {
     const { uid } = req;
 
@@ -27,7 +27,7 @@ export const FetchUserProfile = async (req:Request, res:Response, next:NextFunct
   }
 };
 
-export const DeleteUserProfile = async (req:Request, res:Response, next:NextFunction) => {
+export const deleteUserProfile = async (req:Request, res:Response, next:NextFunction) => {
   try {
     const { uid } = req;
 
@@ -43,7 +43,7 @@ export const DeleteUserProfile = async (req:Request, res:Response, next:NextFunc
   }
 };
 
-export const UpdateUserProfile = async (req:Request, res:Response, next:NextFunction) => {
+export const updateUserProfile = async (req:Request, res:Response, next:NextFunction) => {
   try {
     const { uid } = req;
     const form = formidable({ keepExtensions: true });

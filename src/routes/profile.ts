@@ -1,14 +1,14 @@
 import express from 'express';
 import {
-  FetchUserProfile, UpdateUserProfile,
-  DeleteUserProfile,
+  fetchUserProfile, updateUserProfile,
+  deleteUserProfile,
 } from '../controllers/profile';
-import { VerifyToken } from '../middleware/auth';
+import { verifyToken } from '../middleware/auth';
 
 const router = express.Router();
 
-router.get('/api/v1/user', VerifyToken, FetchUserProfile);
-router.patch('/api/v1/user', VerifyToken, UpdateUserProfile);
-router.delete('/api/v1/user', VerifyToken, DeleteUserProfile);
+router.get('/api/v1/user', verifyToken, fetchUserProfile);
+router.patch('/api/v1/user', verifyToken, updateUserProfile);
+router.delete('/api/v1/user', verifyToken, deleteUserProfile);
 
 export default router;
