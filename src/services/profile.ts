@@ -89,8 +89,6 @@ export const updateUser = async (
       updatedAt: FieldValue.serverTimestamp(),
     });
 
-    console.log('RED', response.uploadId);
-
     return {
       firstName: profileData.firstName,
       lastName: profileData.lastName,

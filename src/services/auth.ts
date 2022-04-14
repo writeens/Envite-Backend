@@ -1,5 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import axios from 'axios';
+import dayjs from 'dayjs';
 import { getAuth } from 'firebase-admin/auth';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { capitalize } from 'lodash';
@@ -31,8 +32,8 @@ export const registerUser = async (user:IRegisterUserRequestBody)
       firstName: capitalize(user.firstName),
       lastName: user.lastName,
       email: user.email,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
+      createdAt: dayjs().unix(),
+      updatedAt: dayjs().unix(),
       uid: userRecord.uid,
       profileUrl: 'https://res.cloudinary.com/dfnnhgvrs/image/upload/v1649772764/envite/placeholder/avatarA.png',
     });

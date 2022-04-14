@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post('/api/v1/envite', verifyToken, createEnvite);
 router.delete('/api/v1/envite/:eid', verifyToken, deleteEnvite);
-router.get('/api/v1/envite/:eid', fetchAnEnvite);
-router.get('/api/v1/envite/home', fetchEnvites);
+router.get('/api/v1/envite/:eid', verifyToken, fetchAnEnvite);
+router.get('/api/v1/envites', verifyToken, fetchEnvites);
 
 export default router;
