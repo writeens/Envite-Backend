@@ -121,7 +121,32 @@ export const fetchAnEnvite = async (req:Request, res:Response, next:NextFunction
 
 export const fetchEnvites = async (req:Request, res:Response, next:NextFunction) => {
   try {
-    const { uid } = req;
+    const query = {
+      limit: Number(req.query.limit) || 2,
+      startAfter: Number(req.query.startAfter) || 0,
+    };
+
+    const schema = Joi.object({
+      limit: Joi.number().optional(),
+      startAfter: Joi.number().optional(),
+    });
+
+    const validationResult = schema.validate(query);
+
+    if (validationResult.error) {
+      const error = new ValidationError(
+        validationResult.error.details[0].message,
+        RESPONSE_TYPES.VALIDATION_ERROR,
+      );
+      return next(error);
+    }
+
+    const response = await EnviteService.fetchEnvites(query.limit, query.startAfter);
+
+    return res.status(StatusCodes.OK).json({
+      status: 'success',
+      data: response,
+    });
   } catch (error) {
     return next(error);
   }

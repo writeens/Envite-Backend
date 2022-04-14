@@ -1,5 +1,6 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/prefer-default-export */
+import dayjs from 'dayjs';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { RESPONSE_MESSAGES } from '../constants/responseMessages';
 import { RESPONSE_TYPES } from '../constants/responseTypes';
@@ -20,8 +21,8 @@ export const createEnvite = async (uid:string, data:ICreateEnviteRequestBody) =>
       placeId: data.placeId,
       location: data.location,
       notes: data.notes,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
+      createdAt: dayjs().unix(),
+      updatedAt: dayjs().unix(),
       imageUrl: '',
       createdBy: uid,
     });
@@ -43,7 +44,7 @@ export const createEnvite = async (uid:string, data:ICreateEnviteRequestBody) =>
     await docRef.update({
       imageUrl: upload.uploadUrl,
       id: createdRef.id,
-      updatedAt: FieldValue.serverTimestamp(),
+      updatedAt: dayjs().unix(),
     });
 
     return {
@@ -129,6 +130,32 @@ export const fetchEnvite = async (eid:string) => {
     throw new ClientError(
       RESPONSE_MESSAGES.UNABLE_TO_FETCH_ENVITE,
       RESPONSE_TYPES.UNABLE_TO_FETCH_ENVITE,
+    );
+  }
+};
+
+export const fetchEnvites = async (limit:number = 2, startAfter:number = 0) => {
+  try {
+    const db = getFirestore();
+
+    const enviteRef = db.collection(COLLECTIONS.ENVITES);
+
+    const snapshot = await enviteRef.orderBy('createdAt', 'asc').limit(limit).startAfter(startAfter).get();
+
+    const items:IEnvite[] = [];
+    snapshot.forEach((result) => {
+      const item = result.data() as IEnvite;
+      items.push(item);
+    });
+
+    return {
+      items,
+      startAfter: items[items.length - 1]?.createdAt || null,
+    };
+  } catch (error) {
+    throw new ClientError(
+      RESPONSE_MESSAGES.UNABLE_TO_FETCH_ENVITES,
+      RESPONSE_TYPES.UNABLE_TO_FETCH_ENVITES,
     );
   }
 };

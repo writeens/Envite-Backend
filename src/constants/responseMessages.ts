@@ -13,6 +13,7 @@ export enum RESPONSE_MESSAGES {
     UNABLE_TO_UPLOAD_AVATAR = 'Looks like we cannot upload your avatar at this time. Please try again later.',
     UNABLE_TO_CREATE_ENVITE = 'We are currently experiencing issues creating this envite. Please try again later.',
     UNABLE_TO_DELETE_ENVITE = 'We are currently experiencing issues deleting this envite. Please try again later.',
-    UNABLE_TO_FETCH_ENVITE = 'We could not fetch this envite as requested'
+    UNABLE_TO_FETCH_ENVITE = 'We could not fetch this envite as requested',
+    UNABLE_TO_FETCH_ENVITES = 'We could not fetch envites as requested'
 
 }
