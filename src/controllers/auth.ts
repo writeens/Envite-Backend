@@ -36,7 +36,7 @@ export const Register = async (req:Request, res:Response, next:NextFunction) => 
         validationResult.error.details[0].message,
         RESPONSE_TYPES.VALIDATION_ERROR,
       );
-      next(error);
+      return next(error);
     }
 
     const userFromBody:IRegisterUserRequestBody = {
@@ -77,7 +77,7 @@ export const Login = async (req:Request, res:Response, next:NextFunction) => {
         validationResult.error.details[0].message,
         RESPONSE_TYPES.VALIDATION_ERROR,
       );
-      next(error);
+      return next(error);
     }
 
     // ACT
