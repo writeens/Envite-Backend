@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import admin from 'firebase-admin';
 import AuthRouter from './routes/auth';
 import ProfileRouter from './routes/profile';
+import EnviteRouter from './routes/envite';
 import { clientErrorMiddlware } from './middleware/error';
 
 dotenv.config();
@@ -33,7 +34,10 @@ app.use(express.urlencoded({ extended: false }));
 
 // USE AUTH ROUTER
 app.use(AuthRouter);
+// USE PROFILE ROUTER
 app.use(ProfileRouter);
+// USE ENVITE ROUTER
+app.use(EnviteRouter);
 
 // CLIENT ERROR ROUTE HANDLER
 app.use(clientErrorMiddlware);

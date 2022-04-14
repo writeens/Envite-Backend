@@ -10,11 +10,11 @@ cloudinary.v2.config({
   secure: true,
 });
 
-export const uploadImage = async (uid:string, image:string, folder:string) => {
+export const uploadImage = async (publicId:string, image:string, folder:string) => {
   try {
     const response = await cloudinary.v2.uploader.upload(image, {
       folder,
-      public_id: `${uid}`,
+      public_id: publicId,
     });
 
     return {
