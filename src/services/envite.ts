@@ -6,6 +6,7 @@ import { RESPONSE_TYPES } from '../constants/responseTypes';
 import { ClientError } from '../exceptions';
 import { COLLECTIONS } from '../helpers/util';
 import { ICreateEnviteRequestBody } from '../interfaces/envite';
+import { IEnvite } from '../models/envite';
 import * as MediaService from './cloudinary';
 
 export const createEnvite = async (uid:string, data:ICreateEnviteRequestBody) => {
@@ -41,11 +42,12 @@ export const createEnvite = async (uid:string, data:ICreateEnviteRequestBody) =>
 
     await docRef.update({
       imageUrl: upload.uploadUrl,
+      id: createdRef.id,
       updatedAt: FieldValue.serverTimestamp(),
     });
 
     return {
-      enviteId: createdRef.id,
+      id: createdRef.id,
       imageUrl: upload.uploadUrl,
       title: data.title,
       price: data.price,
@@ -61,11 +63,47 @@ export const createEnvite = async (uid:string, data:ICreateEnviteRequestBody) =>
   }
 };
 
-// export const deleteEnvite = async (uid:string) => {
-//   try {
-//     // UPLOAD IMAGE
-//     const upload = await MediaService.deleteImage(uid, 'envite/envites');
-//   } catch (error) {
+export const deleteEnvite = async (uid:string, eid:string) => {
+  try {
+    const db = getFirestore();
 
-//   }
-// };
+    const enviteRef = db.collection(COLLECTIONS.ENVITES).doc(eid);
+    const doc = await enviteRef.get();
+
+    if (!doc.exists) {
+      throw new ClientError(
+        RESPONSE_MESSAGES.UNABLE_TO_DELETE_ENVITE,
+        RESPONSE_TYPES.UNABLE_TO_DELETE_ENVITE,
+      );
+    }
+
+    const envite = doc.data() as IEnvite;
+
+    if (envite.createdBy !== uid) {
+      throw new ClientError(
+        RESPONSE_MESSAGES.UNAUTHORIZED,
+        RESPONSE_TYPES.UNAUTHORIZED,
+      );
+    }
+    // UPLOAD IMAGE
+    const deleteSuccessful = await MediaService.deleteImage(eid, 'envite/envites');
+
+    if (!deleteSuccessful) {
+      throw new ClientError(
+        RESPONSE_MESSAGES.UNABLE_TO_DELETE_ENVITE,
+        RESPONSE_TYPES.UNABLE_TO_DELETE_ENVITE_CLOUDINARY,
+      );
+    }
+
+    await enviteRef.delete();
+
+    return {
+      eid,
+    };
+  } catch (error) {
+    throw new ClientError(
+      RESPONSE_MESSAGES.UNABLE_TO_DELETE_ENVITE,
+      RESPONSE_TYPES.UNABLE_TO_DELETE_ENVITE,
+    );
+  }
+};

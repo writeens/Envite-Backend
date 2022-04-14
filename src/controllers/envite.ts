@@ -54,7 +54,39 @@ export const createEnvite = async (req:Request, res:Response, next:NextFunction)
       data,
     });
   } catch (error) {
-    next(error);
+    return next(error);
+  }
+};
+
+export const deleteEnvite = async (req:Request, res:Response, next:NextFunction) => {
+  try {
+    const { params, uid } = req;
+
+    const schema = Joi.object({
+      eid: Joi.string().required(),
+    });
+
+    const validationResult = schema.validate(params);
+
+    if (validationResult.error) {
+      const error = new ValidationError(
+        validationResult.error.details[0].message,
+        RESPONSE_TYPES.VALIDATION_ERROR,
+      );
+      return next(error);
+    }
+
+    // DELETE
+    const response = await EnviteService.deleteEnvite(uid, params.eid);
+
+    return res.status(StatusCodes.OK).json({
+      status: 'success',
+      data: {
+        id: response.eid,
+      },
+    });
+  } catch (error) {
+    return next(error);
   }
 };
 
@@ -62,7 +94,7 @@ export const fetchAnEnvite = async (req:Request, res:Response, next:NextFunction
   try {
     const { uid } = req;
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -70,6 +102,6 @@ export const fetchEnvites = async (req:Request, res:Response, next:NextFunction)
   try {
     const { uid } = req;
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
