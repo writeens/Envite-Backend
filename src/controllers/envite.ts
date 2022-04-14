@@ -92,7 +92,28 @@ export const deleteEnvite = async (req:Request, res:Response, next:NextFunction)
 
 export const fetchAnEnvite = async (req:Request, res:Response, next:NextFunction) => {
   try {
-    const { uid } = req;
+    const { params } = req;
+
+    const schema = Joi.object({
+      eid: Joi.string().required(),
+    });
+
+    const validationResult = schema.validate(params);
+
+    if (validationResult.error) {
+      const error = new ValidationError(
+        validationResult.error.details[0].message,
+        RESPONSE_TYPES.VALIDATION_ERROR,
+      );
+      return next(error);
+    }
+
+    const response = await EnviteService.fetchEnvite(params.eid);
+
+    return res.status(StatusCodes.OK).json({
+      status: 'success',
+      data: response,
+    });
   } catch (error) {
     return next(error);
   }
