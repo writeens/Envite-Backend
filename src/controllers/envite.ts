@@ -122,8 +122,8 @@ export const fetchAnEnvite = async (req:Request, res:Response, next:NextFunction
 export const fetchEnvites = async (req:Request, res:Response, next:NextFunction) => {
   try {
     const query = {
-      limit: Number(req.query.limit) || 2,
-      startAfter: Number(req.query.startAfter) || 0,
+      limit: Number(req.query.limit) || undefined,
+      startAfter: Number(req.query.startAfter) || undefined,
     };
 
     const schema = Joi.object({
@@ -151,6 +151,41 @@ export const fetchEnvites = async (req:Request, res:Response, next:NextFunction)
     return next(error);
   }
 };
+
+export const fetchMyEnvites = async (req:Request, res:Response, next:NextFunction) => {
+  try {
+    const { uid } = req;
+    const query = {
+      limit: Number(req.query.limit) || undefined,
+      startAfter: Number(req.query.startAfter) || undefined,
+    };
+
+    const schema = Joi.object({
+      limit: Joi.number().optional(),
+      startAfter: Joi.number().optional(),
+    });
+
+    const validationResult = schema.validate(query);
+
+    if (validationResult.error) {
+      const error = new ValidationError(
+        validationResult.error.details[0].message,
+        RESPONSE_TYPES.VALIDATION_ERROR,
+      );
+      return next(error);
+    }
+
+    const response = await EnviteService.fetchMyEnvites(uid, query.limit, query.startAfter);
+
+    return res.status(StatusCodes.OK).json({
+      status: 'success',
+      data: response,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 export const requestEnvite = async (req:Request, res:Response, next:NextFunction) => {
   try {
     const { params, uid } = req;
@@ -240,7 +275,7 @@ export const fetchSentEnvites = async (req:Request, res:Response, next:NextFunct
   try {
     const { uid } = req;
     const query = {
-      limit: Number(req.query.limit) || 2,
+      limit: Number(req.query.limit) || undefined,
       startAfter: Number(req.query.startAfter) || undefined,
     };
 
@@ -259,7 +294,7 @@ export const fetchSentEnvites = async (req:Request, res:Response, next:NextFunct
       return next(error);
     }
 
-    const response = await EnviteService.fetchSentEnvites(uid, query.startAfter, query.limit);
+    const response = await EnviteService.fetchSentEnvites(uid, query.limit, query.startAfter);
 
     return res.status(StatusCodes.OK).json({
       status: 'success',
@@ -274,7 +309,7 @@ export const fetchReceivedEnvites = async (req:Request, res:Response, next:NextF
   try {
     const { uid } = req;
     const query = {
-      limit: Number(req.query.limit) || 2,
+      limit: Number(req.query.limit) || undefined,
       startAfter: Number(req.query.startAfter) || undefined,
     };
 
@@ -293,7 +328,7 @@ export const fetchReceivedEnvites = async (req:Request, res:Response, next:NextF
       return next(error);
     }
 
-    const response = await EnviteService.fetchReceivedEnvites(uid, query.startAfter, query.limit);
+    const response = await EnviteService.fetchReceivedEnvites(uid, query.limit, query.startAfter);
 
     return res.status(StatusCodes.OK).json({
       status: 'success',

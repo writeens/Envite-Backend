@@ -152,19 +152,67 @@ export const fetchEnvite = async (eid:string) => {
   }
 };
 
-export const fetchEnvites = async (limit:number = 2, startAfter:number = 0) => {
+export const fetchEnvites = async (limit:number = 2, startAfter:number|undefined = undefined) => {
   try {
     const db = getFirestore();
 
     const enviteRef = db.collection(COLLECTIONS.ENVITES);
 
-    const snapshot = await enviteRef.orderBy('createdAt', 'asc').limit(limit).startAfter(startAfter).get();
+    let snapshot = null;
 
-    const items:IEnvite[] = [];
-    snapshot.forEach((result) => {
+    if (startAfter) {
+      snapshot = await enviteRef.orderBy('createdAt', 'asc').limit(limit).startAfter(startAfter).get();
+    } else {
+      snapshot = await enviteRef.orderBy('createdAt', 'asc').limit(limit).get();
+    }
+
+    const items:IEnvite[] = await Promise.all(snapshot.docs.map((result) => {
       const item = result.data() as IEnvite;
-      items.push(item);
-    });
+      return item;
+    }));
+
+    return {
+      items,
+      startAfter: items[items.length - 1]?.createdAt || null,
+    };
+  } catch (error) {
+    console.log(error);
+    throw new ClientError(
+      RESPONSE_MESSAGES.UNABLE_TO_FETCH_ENVITES,
+      RESPONSE_TYPES.UNABLE_TO_FETCH_ENVITES,
+    );
+  }
+};
+export const fetchMyEnvites = async (
+  uid:string,
+  limit:number = 2,
+  startAfter:number|undefined = undefined,
+) => {
+  try {
+    const db = getFirestore();
+
+    const enviteRef = db.collection(COLLECTIONS.ENVITES);
+
+    let snapshot = null;
+
+    if (startAfter) {
+      snapshot = await enviteRef
+        .where('createdBy', '==', uid)
+        .orderBy('createdAt', 'desc')
+        .limit(limit).startAfter(startAfter)
+        .get();
+    } else {
+      snapshot = await enviteRef
+        .where('createdBy', '==', uid)
+        .orderBy('createdAt', 'desc')
+        .limit(limit)
+        .get();
+    }
+
+    const items:IEnvite[] = await Promise.all(snapshot.docs.map((result) => {
+      const item = result.data() as IEnvite;
+      return item;
+    }));
 
     return {
       items,
@@ -348,8 +396,8 @@ export const declineEnvite = async (uid:string, eid:string) => {
 
 export const fetchSentEnvites = async (
   uid:string,
-  startAfter:number | undefined,
   limit:number = 2,
+  startAfter:number | undefined = undefined,
 ) => {
   try {
     const db = getFirestore();
@@ -395,8 +443,8 @@ export const fetchSentEnvites = async (
 
 export const fetchReceivedEnvites = async (
   uid:string,
-  startAfter:number | undefined,
   limit:number = 2,
+  startAfter:number | undefined = undefined,
 ) => {
   try {
     const db = getFirestore();
