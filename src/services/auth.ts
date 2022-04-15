@@ -2,7 +2,7 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { getAuth } from 'firebase-admin/auth';
-import { FieldValue, getFirestore } from 'firebase-admin/firestore';
+import { getFirestore } from 'firebase-admin/firestore';
 import { capitalize } from 'lodash';
 import { RESPONSE_MESSAGES } from '../constants/responseMessages';
 import { RESPONSE_TYPES } from '../constants/responseTypes';
@@ -81,6 +81,9 @@ export const loginUser = async ({ email, password }:{email:string, password:stri
 
     return userData;
   } catch (error:any) {
+    if (error instanceof ClientError) {
+      throw error;
+    }
     let message = '';
     if (error.response) {
       switch (error.response.data.error.message) {

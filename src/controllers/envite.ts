@@ -151,3 +151,155 @@ export const fetchEnvites = async (req:Request, res:Response, next:NextFunction)
     return next(error);
   }
 };
+export const requestEnvite = async (req:Request, res:Response, next:NextFunction) => {
+  try {
+    const { params, uid } = req;
+    const schema = Joi.object({
+      eid: Joi.string().required().valid(),
+    });
+
+    const validationResult = schema.validate(params);
+
+    if (validationResult.error) {
+      const error = new ValidationError(
+        validationResult.error.details[0].message,
+        RESPONSE_TYPES.VALIDATION_ERROR,
+      );
+      return next(error);
+    }
+
+    // TODO - HANDLE WHAT HAPPENS WHEN A REQUEST IS MADE
+    const data = await EnviteService.requestEnvite(uid, params.eid);
+
+    return res.status(StatusCodes.OK).json({
+      status: 'success',
+      data,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const acceptEnvite = async (req:Request, res:Response, next:NextFunction) => {
+  try {
+    const { params, uid } = req;
+    const schema = Joi.object({
+      eid: Joi.string().required().valid(),
+    });
+
+    const validationResult = schema.validate(params);
+
+    if (validationResult.error) {
+      const error = new ValidationError(
+        validationResult.error.details[0].message,
+        RESPONSE_TYPES.VALIDATION_ERROR,
+      );
+      return next(error);
+    }
+
+    const data = await EnviteService.acceptEnvite(uid, params.eid);
+
+    return res.status(StatusCodes.OK).json({
+      status: 'success',
+      data,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const declineEnvite = async (req:Request, res:Response, next:NextFunction) => {
+  try {
+    const { params, uid } = req;
+    const schema = Joi.object({
+      eid: Joi.string().required().valid(),
+    });
+
+    const validationResult = schema.validate(params);
+
+    if (validationResult.error) {
+      const error = new ValidationError(
+        validationResult.error.details[0].message,
+        RESPONSE_TYPES.VALIDATION_ERROR,
+      );
+      return next(error);
+    }
+
+    const data = await EnviteService.declineEnvite(uid, params.eid);
+
+    return res.status(StatusCodes.OK).json({
+      status: 'success',
+      data,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const fetchSentEnvites = async (req:Request, res:Response, next:NextFunction) => {
+  try {
+    const { uid } = req;
+    const query = {
+      limit: Number(req.query.limit) || 2,
+      startAfter: Number(req.query.startAfter) || undefined,
+    };
+
+    const schema = Joi.object({
+      limit: Joi.number().optional(),
+      startAfter: Joi.number().optional(),
+    });
+
+    const validationResult = schema.validate(query);
+
+    if (validationResult.error) {
+      const error = new ValidationError(
+        validationResult.error.details[0].message,
+        RESPONSE_TYPES.VALIDATION_ERROR,
+      );
+      return next(error);
+    }
+
+    const response = await EnviteService.fetchSentEnvites(uid, query.startAfter, query.limit);
+
+    return res.status(StatusCodes.OK).json({
+      status: 'success',
+      data: response,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const fetchReceivedEnvites = async (req:Request, res:Response, next:NextFunction) => {
+  try {
+    const { uid } = req;
+    const query = {
+      limit: Number(req.query.limit) || 2,
+      startAfter: Number(req.query.startAfter) || undefined,
+    };
+
+    const schema = Joi.object({
+      limit: Joi.number().optional(),
+      startAfter: Joi.number().optional(),
+    });
+
+    const validationResult = schema.validate(query);
+
+    if (validationResult.error) {
+      const error = new ValidationError(
+        validationResult.error.details[0].message,
+        RESPONSE_TYPES.VALIDATION_ERROR,
+      );
+      return next(error);
+    }
+
+    const response = await EnviteService.fetchReceivedEnvites(uid, query.startAfter, query.limit);
+
+    return res.status(StatusCodes.OK).json({
+      status: 'success',
+      data: response,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};

@@ -14,6 +14,13 @@ export enum RESPONSE_MESSAGES {
     UNABLE_TO_CREATE_ENVITE = 'We are currently experiencing issues creating this envite. Please try again later.',
     UNABLE_TO_DELETE_ENVITE = 'We are currently experiencing issues deleting this envite. Please try again later.',
     UNABLE_TO_FETCH_ENVITE = 'We could not fetch this envite as requested',
-    UNABLE_TO_FETCH_ENVITES = 'We could not fetch envites as requested'
+    UNABLE_TO_FETCH_ENVITES = 'We could not fetch envites as requested',
+    UNABLE_TO_REQUEST_ENVITE = 'We could not process this request.',
+    UNABLE_TO_REQUEST_OWN_ENVITE = 'You cannot request for an envite you created.',
+    UNABLE_TO_ACCEPT_ENVITE = 'You are not authorized to accept this envite.',
+    UNABLE_TO_DECLINE_ENVITE = 'You are not authorized to decline this envite.',
+    ENVITE_ALREADY_REQUESTED = 'You have already requested this envite. Please wait for feedback from the owner',
+    ENVITE_ALREADY_ACCEPTED = 'You have already accepted this envite. Please wait for the sender to reach out',
+    ENVITE_ALREADY_DECLINED = 'You have already declined this envite. Please wait for feedback from the owner',
 
 }

@@ -27,6 +27,9 @@ export const fetchUser = async (uid:string) => {
 
     return user;
   } catch (error) {
+    if (error instanceof ClientError) {
+      throw error;
+    }
     throw new ClientError(
       RESPONSE_MESSAGES.UNABLE_TO_FETCH_USER,
       RESPONSE_TYPES.UNABLE_TO_FETCH_USER,
@@ -95,6 +98,9 @@ export const updateUser = async (
       profileUrl: response.uploadUrl,
     };
   } catch (error) {
+    if (error instanceof ClientError) {
+      throw error;
+    }
     throw new ClientError(
       RESPONSE_MESSAGES.UNABLE_TO_UPDATE_PROFILE,
       RESPONSE_TYPES.UNABLE_TO_UPDATE_PROFILE,
@@ -119,6 +125,9 @@ export const deleteUser = async (uid:string) => {
       uid,
     };
   } catch (error) {
+    if (error instanceof ClientError) {
+      throw error;
+    }
     throw new ClientError(
       RESPONSE_MESSAGES.UNABLE_TO_DELETE_USER,
       RESPONSE_TYPES.UNABLE_TO_DELETE_USER,

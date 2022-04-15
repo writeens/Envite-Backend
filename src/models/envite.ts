@@ -10,3 +10,13 @@ export interface IEnvite {
     imageUrl: string,
     createdBy: string
 }
+
+export interface IEnviteRequest {
+    id:string,
+    eid:string,
+    status:'PENDING' | 'ACCEPTED' | 'DECLINED'
+    from:string,
+    to:string,
+    createdAt:number,
+    updatedAt:number,
+}
