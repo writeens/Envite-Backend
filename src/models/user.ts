@@ -5,5 +5,7 @@ export interface IUser {
     profileUrl:string,
     uid:string,
     createdAt: number,
-    updatedAt: number
+    updatedAt: number,
+    q1:string,
+    q2:string
 }

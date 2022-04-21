@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable consistent-return */
 /* eslint-disable import/prefer-default-export */
 import { Response, Request, NextFunction } from 'express';
@@ -37,5 +38,9 @@ export const clientErrorMiddlware = (err:Error, req:Request, res:Response, next:
     });
   }
 
-  next(err);
+  return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    status: 'fail',
+    message: 'We could not process this process',
+    type: RESPONSE_TYPES.SERVER_ERROR,
+  });
 };
