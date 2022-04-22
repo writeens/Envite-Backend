@@ -7,7 +7,7 @@ import { RESPONSE_TYPES } from '../constants/responseTypes';
 import { ClientError } from '../exceptions';
 import { COLLECTIONS } from '../helpers/util';
 import {
-  ICreateEnviteRequestBody, IFetchEnvitesResponse, IFetchMyEnviteResponse,
+  ICreateEnviteRequestBody, ICreateEnviteResponse, IFetchEnvitesResponse, IFetchMyEnviteResponse,
   IFetchReceivedRequestResponse, IFetchSentRequestResponse,
 } from '../interfaces/envite';
 import { IEnvite, IEnviteRequest } from '../models/envite';
@@ -17,7 +17,7 @@ import * as MediaService from './cloudinary';
 // FETCH MY ENVITES
 export const fetchMyEnvites = async (
   uid:string,
-  limit:number = 2,
+  limit:number = 4,
   startAfter:number|undefined = undefined,
 ):Promise<IFetchMyEnviteResponse[]> => {
   try {
@@ -253,7 +253,7 @@ export const declineRequest = async (uid:string, requestId:string) => {
 
     return {
       requestId: requestRef.id,
-      status: 'DECLINED',
+      requestStatus: 'DECLINED',
       updatedAt: timestamp,
     };
   } catch (error) {
@@ -293,7 +293,7 @@ export const fetchHomeEnvites = async (
         const createdByUserSnapshot = await userRef.doc(envite.createdBy).get();
         const createdByUser = createdByUserSnapshot.data() as IUser;
         const requestSnapshot = await requestRef.where('eid', '==', envite.id).where('from', '==', uid).get();
-        let status = 'PENDING';
+        let status = 'IDLE';
         if (!requestSnapshot.empty) {
           const request = requestSnapshot.docs[0].data() as IEnviteRequest;
           status = request.status;
@@ -301,8 +301,6 @@ export const fetchHomeEnvites = async (
         return { envite, createdByUser, status };
       }),
     );
-
-    console.log(items);
 
     return items;
   } catch (error) {
@@ -365,7 +363,7 @@ export const requestEnvite = async (uid:string, eid:string) => {
 
     return {
       updatedAt: timestamp,
-      status: 'PENDING',
+      requestStatus: 'PENDING',
       requestId: requestRef.id,
     };
   } catch (error) {
@@ -379,19 +377,23 @@ export const requestEnvite = async (uid:string, eid:string) => {
   }
 };
 
-export const createEnvite = async (uid:string, data:ICreateEnviteRequestBody) => {
+export const createEnvite = async (
+  uid:string,
+  data:ICreateEnviteRequestBody,
+):Promise<ICreateEnviteResponse> => {
   try {
     // CREATE ENVITE IN DB
     const db = getFirestore();
 
+    const timestamp = dayjs().unix();
     const createdRef = await db.collection(COLLECTIONS.ENVITES).add({
       title: data.title,
       price: data.price,
       placeId: data.placeId,
       location: data.location,
       note: data.note,
-      createdAt: dayjs().unix(),
-      updatedAt: dayjs().unix(),
+      createdAt: timestamp,
+      updatedAt: timestamp,
       imageUrl: '',
       createdBy: uid,
     });
@@ -406,24 +408,34 @@ export const createEnvite = async (uid:string, data:ICreateEnviteRequestBody) =>
       );
     }
 
-    // UPDATE DB WITH NEW IMAGE
-
     const docRef = db.collection(COLLECTIONS.ENVITES).doc(createdRef.id);
 
+    const timestamp2 = dayjs().unix();
     await docRef.update({
       imageUrl: upload.uploadUrl,
       id: createdRef.id,
-      updatedAt: dayjs().unix(),
+      updatedAt: timestamp2,
     });
 
+    const userRef = await db.collection(COLLECTIONS.USERS).doc(uid).get();
+
+    const createdByUser = userRef.data() as IUser;
+
     return {
-      id: createdRef.id,
-      imageUrl: upload.uploadUrl,
-      title: data.title,
-      price: data.price,
-      placeId: data.placeId,
-      location: data.location,
-      note: data.note,
+      envite: {
+        id: createdRef.id,
+        imageUrl: upload.uploadUrl,
+        title: data.title,
+        price: Number(data.price),
+        placeId: data.placeId,
+        location: data.location,
+        note: data.note,
+        createdAt: timestamp,
+        updatedAt: timestamp2,
+        createdBy: uid,
+      },
+      createdByUser,
+      status: 'IDLE',
     };
   } catch (error) {
     if (error instanceof ClientError) {

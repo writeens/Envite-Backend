@@ -31,3 +31,9 @@ export interface IFetchEnvitesResponse {
     createdByUser:IUser,
     status:string,
 }
+
+export interface ICreateEnviteResponse {
+    envite:IEnvite,
+    createdByUser:IUser,
+    status:string,
+}
