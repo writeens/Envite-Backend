@@ -4,7 +4,7 @@ export interface IEnvite {
     location: string,
     placeId:string,
     price:number,
-    notes:string,
+    note:string,
     createdAt: number,
     updatedAt: number,
     imageUrl: string,

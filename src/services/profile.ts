@@ -1,6 +1,7 @@
 /* eslint-disable import/no-unresolved */
+import dayjs from 'dayjs';
 import { getAuth } from 'firebase-admin/auth';
-import { FieldValue, getFirestore } from 'firebase-admin/firestore';
+import { getFirestore } from 'firebase-admin/firestore';
 import { RESPONSE_MESSAGES } from '../constants/responseMessages';
 import { RESPONSE_TYPES } from '../constants/responseTypes';
 import { ClientError } from '../exceptions';
@@ -45,6 +46,7 @@ export const updateUser = async (
     // UPDATE USER ON AUTHENTICATION DASHBOARD
     const userRecord = await getAuth().updateUser(uid, {
       displayName: `${profileData.firstName} ${profileData.lastName}`,
+      email: profileData.email,
 
     });
 
@@ -63,22 +65,31 @@ export const updateUser = async (
 
     const user = doc.data() as IUser;
 
-    const URLArray = user.profileUrl.split('/');
-    const publicId = URLArray[URLArray.length - 1].split('.')[0];
+    let imageResponse = {
+      uploadUrl: user.profileUrl || '',
+      uploadId: '',
+    };
 
-    // REMOVE EXISTING IMAGE IF IT EXISTS
-    if (publicId === uid) {
-      await MediaService.deleteImage(publicId, 'envite/avatar');
-    }
+    if (profileData.filePath) {
+      const URLArray = user.profileUrl.split('/');
+      const publicId = URLArray[URLArray.length - 1].split('.')[0];
 
-    // UPLOAD NEW IMAGE
-    const response = await MediaService.uploadImage(uid, profileData.filePath, 'envite/avatar');
+      // REMOVE EXISTING IMAGE IF IT EXISTS
+      if (publicId === uid) {
+        await MediaService.deleteImage(publicId, 'envite/avatar');
+      }
 
-    if (!response) {
-      throw new ClientError(
-        RESPONSE_MESSAGES.UNABLE_TO_UPLOAD_AVATAR,
-        RESPONSE_TYPES.UNABLE_TO_UPLOAD_AVATAR,
-      );
+      // UPLOAD NEW IMAGE
+      const mediaResponse = await MediaService.uploadImage(uid, profileData.filePath, 'envite/avatar');
+
+      if (!mediaResponse) {
+        throw new ClientError(
+          RESPONSE_MESSAGES.UNABLE_TO_UPLOAD_AVATAR,
+          RESPONSE_TYPES.UNABLE_TO_UPLOAD_AVATAR,
+        );
+      }
+
+      imageResponse = mediaResponse;
     }
 
     // UPDATE USER IN DATABASE
@@ -88,14 +99,22 @@ export const updateUser = async (
     await docRef.update({
       firstName: profileData.firstName,
       lastName: profileData.lastName,
-      profileUrl: response.uploadUrl,
-      updatedAt: FieldValue.serverTimestamp(),
+      email: profileData.email,
+      q1: profileData.q1,
+      q2: profileData.q2,
+      profileUrl: imageResponse.uploadUrl,
+      updatedAt: dayjs().unix(),
     });
 
     return {
       firstName: profileData.firstName,
       lastName: profileData.lastName,
-      profileUrl: response.uploadUrl,
+      profileUrl: imageResponse.uploadUrl,
+      email: profileData.email,
+      createdAt: user.createdAt,
+      uid: userRecord.uid,
+      q1: profileData.q1,
+      q2: profileData.q2,
     };
   } catch (error) {
     if (error instanceof ClientError) {

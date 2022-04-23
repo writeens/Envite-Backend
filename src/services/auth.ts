@@ -28,13 +28,16 @@ export const registerUser = async (user:IRegisterUserRequestBody)
     // CREATE USER IN DATABASE
     const db = getFirestore();
 
+    const now = dayjs().unix();
     await db.collection(COLLECTIONS.USERS).doc(userRecord.uid).set({
       firstName: capitalize(user.firstName),
-      lastName: user.lastName,
+      lastName: capitalize(user.lastName),
       email: user.email,
-      createdAt: dayjs().unix(),
-      updatedAt: dayjs().unix(),
+      createdAt: now,
+      updatedAt: now,
       uid: userRecord.uid,
+      q1: '',
+      q2: '',
       profileUrl: 'https://res.cloudinary.com/dfnnhgvrs/image/upload/v1649772764/envite/placeholder/avatarA.png',
     });
 
@@ -46,6 +49,11 @@ export const registerUser = async (user:IRegisterUserRequestBody)
       firstName: user.firstName,
       lastName: user.lastName,
       token: customToken,
+      createdAt: now,
+      uid: userRecord.uid,
+      profileUrl: 'https://res.cloudinary.com/dfnnhgvrs/image/upload/v1649772764/envite/placeholder/avatarA.png',
+      q1: '',
+      q2: '',
     };
   } catch (error:any) {
     throw new ClientError(error.message, RESPONSE_TYPES.UNABLE_TO_CREATE_USER);
@@ -77,6 +85,11 @@ export const loginUser = async ({ email, password }:{email:string, password:stri
       lastName: user.lastName,
       token: customToken,
       email: user.email,
+      uid: user.uid,
+      createdAt: user.createdAt,
+      profileUrl: user.profileUrl,
+      q1: user.q1,
+      q2: user.q2,
     };
 
     return userData;

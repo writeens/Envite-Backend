@@ -9,7 +9,7 @@ export class ClientError extends Error {
 
   status: number;
 
-  constructor(message:string, type:string, status:number = StatusCodes.BAD_GATEWAY) {
+  constructor(message:string, type:string, status:number = StatusCodes.BAD_REQUEST) {
     super(message);
     this.type = type ?? RESPONSE_TYPES.VALIDATION_ERROR;
     this.message = message;

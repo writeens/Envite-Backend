@@ -1,4 +1,5 @@
 /* eslint-disable import/prefer-default-export */
+
 const setDBEnv = (collectionName:string) => {
   switch (process.env.NODE_ENV) {
     case 'production':

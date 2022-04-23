@@ -63,6 +63,9 @@ export const updateUserProfile = async (req:Request, res:Response, next:NextFunc
     const schema = Joi.object({
       firstName: Joi.string().required(),
       lastName: Joi.string().required(),
+      email: Joi.string().email().required(),
+      q1: Joi.string().required(),
+      q2: Joi.string().required(),
     });
 
     const validationResult = schema.validate(formData.fields);
@@ -80,7 +83,10 @@ export const updateUserProfile = async (req:Request, res:Response, next:NextFunc
     const data = await UserService.updateUser(uid, {
       firstName: formData.fields.firstName,
       lastName: formData.fields.lastName,
-      filePath: image.filepath,
+      email: formData.fields.email,
+      q1: formData.fields.q1,
+      q2: formData.fields.q2,
+      filePath: image?.filepath || '',
     });
 
     return res.status(StatusCodes.OK).json({
