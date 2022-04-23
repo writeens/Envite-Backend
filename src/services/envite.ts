@@ -17,7 +17,7 @@ import * as MediaService from './cloudinary';
 // FETCH MY ENVITES
 export const fetchMyEnvites = async (
   uid:string,
-  limit:number = 4,
+  limit:number = 7,
   startAfter:number|undefined = undefined,
 ):Promise<IFetchMyEnviteResponse[]> => {
   try {
@@ -63,7 +63,7 @@ export const fetchMyEnvites = async (
 
 export const fetchReceivedRequests = async (
   uid:string,
-  limit:number = 2,
+  limit:number = 10,
   startAfter:number | undefined = undefined,
 ):Promise<IFetchReceivedRequestResponse[]> => {
   try {
@@ -111,7 +111,7 @@ export const fetchReceivedRequests = async (
 
 export const fetchSentRequests = async (
   uid:string,
-  limit:number = 2,
+  limit:number = 10,
   startAfter:number | undefined = undefined,
 ):Promise<IFetchSentRequestResponse[]> => {
   try {
@@ -269,7 +269,7 @@ export const declineRequest = async (uid:string, requestId:string) => {
 
 export const fetchHomeEnvites = async (
   uid:string,
-  limit:number = 3,
+  limit:number = 7,
   startAfter:number|undefined = undefined,
 ):Promise<IFetchEnvitesResponse[]> => {
   try {
