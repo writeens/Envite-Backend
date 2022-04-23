@@ -102,6 +102,7 @@ export const fetchReceivedRequests = async (
 
     return items;
   } catch (error) {
+    console.log(error);
     throw new ClientError(
       RESPONSE_MESSAGES.UNABLE_TO_FETCH_ENVITES,
       RESPONSE_TYPES.UNABLE_TO_FETCH_ENVITES,
@@ -150,6 +151,7 @@ export const fetchSentRequests = async (
 
     return items;
   } catch (error) {
+    console.log(error);
     throw new ClientError(
       RESPONSE_MESSAGES.UNABLE_TO_FETCH_ENVITES,
       RESPONSE_TYPES.UNABLE_TO_FETCH_ENVITES,
